@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1315cc1b2bab42940866462daf45f102, type: 3}
+  m_Name: MachineGun
+  m_EditorClassIdentifier: 
+  slot: 0
+  name: rifle
+  damage: 100
+  ammo: 255
+  clipSize: 30
+  fireRate: 1
+  bulletSpeed: 100
+  bulletDrop: 1
+  burst: 1
+  prefab: {fileID: 2871181244834351369, guid: 62e2feb2ab13e584d80b6a8cfcbca9da, type: 3}
+  BulletTrailRenderer: {fileID: 3827800863306381443, guid: 78e0e6ca6b83339468ffb42529661e27,
+    type: 3}

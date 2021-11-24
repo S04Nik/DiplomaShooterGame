@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Com.Tereshchuk.Shooter.PlayerController">
+    <Position X="12.25" Y="2" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AEQgAAAQACAAAAEAAAACIAABAAAAkIAAAgBAgACAAEA=</HashCode>
+      <FileName>Assets\Scripts\PlayerController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="activeWeapon" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AmmoWidget">
+    <Position X="24.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\AmmoWidget.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.RaycastWeapon">
+    <Position X="18.75" Y="2.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Com.Tereshchuk.Shooter.RaycastWeapon.Bullet">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\WeaponScripts\RaycastWeapon.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AABAAEAADigyEgCEAAACiAIEBAAAIQhBAADkEEABCMA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\RaycastWeapon.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_soundController" />
+      <Field Name="loadOut" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.Gun">
+    <Position X="21.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAIAgQBAAAAAAwIAAAAEAYBgCAAGAAAgAAA=</HashCode>
+      <FileName>Assets\Scripts\ScriptableObject\Gun.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CharacterAiming">
+    <Position X="12" Y="10" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>RAUAAIIABiAAAQAUAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\CharacterAiming.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_playerController" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.WeaponSoundController">
+    <Position X="15" Y="10.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAQAEAAAAAAEAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\WeaponSoundController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_activeWeapon" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WeaponAnimationEvents">
+    <Position X="22" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\WeaponAnimationEvents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ActiveWeapon">
+    <Position X="16" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>RAYCAAEeASgEBAAACAEUQQAAREEAKAAgACRAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\ActiveWeapon.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="loadOut" />
+      <Field Name="_soundController" />
+      <Field Name="characterAiming" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.ReloadWeapon">
+    <Position X="24" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAQCAQBwASAEAAAAAIBAAgAAAAAAAAABAAAAAAgAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\ReloadWeapon.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="AnimationEvents" />
+      <Field Name="_ammoWidget" />
+      <Field Name="activeWeapon" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.WeaponRecoil">
+    <Position X="26.25" Y="6" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAYCAAIAAAAgBAQBAIAGAAAACAIAAAAAAAKAAAAACEA=</HashCode>
+      <FileName>Assets\Scripts\WeaponScripts\WeaponRecoil.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="characterAiming" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.WeaponPickUp">
+    <Position X="26.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\WeaponPickUp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Menu">
+    <Position X="19" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAIAAAACAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Assets\Scripts\UI\Menu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KillListContainer">
+    <Position X="21.25" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAEAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UI\KillListContainer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="arrLines" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="KillListLine">
+    <Position X="21.25" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAEAEAA=</HashCode>
+      <FileName>Assets\Scripts\UI\KillListLine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.LauncherMenu">
+    <Position X="23.25" Y="16.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gACAAAABAGAAgAAAA0QAIAAgiAEAEAAEUAAAAABAUEA=</HashCode>
+      <FileName>Assets\Scripts\UI\LauncherMenu.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="playerCustomizationTool" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MenuManager">
+    <Position X="19" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAABAAAAQAAAAAAAAAAAAAAAAQAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\UI\MenuManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="menus" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlayerCustomization">
+    <Position X="27" Y="16.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AKhAUIIAACAAEAAAgIAAAAAIAAAAAAAERQATkIAgCQE=</HashCode>
+      <FileName>Assets\Scripts\UI\PlayerCustomization.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_settings" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlayerListItem">
+    <Position X="16.75" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAACAAAAAAAAAAMAAAEAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UI\PlayerListItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomListItem">
+    <Position X="18.75" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAACAAAAAAAIAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UI\RoomListItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Com.Tereshchuk.Shooter.PlayerSettings">
+    <Position X="29.75" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAABAgAAAAgAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\ScriptableObject\PlayerSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
