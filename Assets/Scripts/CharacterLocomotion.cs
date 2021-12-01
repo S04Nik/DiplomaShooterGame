@@ -17,7 +17,7 @@ namespace Com.Tereshchuk.Shooter
         private Vector2 _input;
         private Vector3 _velocity;
         private bool _isJumping;
-        private ActiveWeapon _activeWeapon;
+       // private ActiveWeapon _activeWeapon;
         private ReloadWeapon _reloadWeapon;
         [SerializeField] private Transform cameraLookAt;
         [SerializeField] private Animator rigController;
@@ -37,7 +37,7 @@ namespace Com.Tereshchuk.Shooter
 
             _animator = GetComponent<Animator>();
             _characterController = GetComponent<CharacterController>();
-            _activeWeapon = GetComponent<ActiveWeapon>();
+            //_activeWeapon = GetComponent<ActiveWeapon>();
             _reloadWeapon = GetComponent<ReloadWeapon>();
             _playerAudioController = GetComponent<PlayerAudioController>();
         }
@@ -130,11 +130,12 @@ namespace Com.Tereshchuk.Shooter
         {
             bool isSprinting = Input.GetKey(KeyCode.LeftShift) && _input.y > 0;
 
-            bool isFiring = _activeWeapon.IsFiring();
+           // bool isFiring = _activeWeapon.IsFiring();
             bool isReloading = _reloadWeapon.IsReloading();
-            bool isChangingWeapon = _activeWeapon.IsChangingWeapon();
+          //  bool isChangingWeapon = _activeWeapon.IsChangingWeapon();
 
-            return isSprinting && !isFiring && !isReloading && !isChangingWeapon;
+          //  return isSprinting && !isFiring && !isReloading && !isChangingWeapon;
+          return false;
         }
 
         private void UpdateIsSprinting()

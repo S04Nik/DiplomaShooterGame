@@ -1,4 +1,5 @@
 ﻿using Cinemachine;
+using Com.Tereshchuk.Shooter.NewWeapon_Inventory_System;
 using UnityEngine;
 using Photon.Pun;
 using Unity.Mathematics;
@@ -13,7 +14,7 @@ namespace Com.Tereshchuk.Shooter
         public CinemachineVirtualCamera followCamera;
         public Camera mainCamera;
         public MultiAimConstSetUp rigging;
-        [SerializeField] private ActiveWeapon activeWeapon;
+        [SerializeField] private InventoryController inventoryController;
         private SpawnManager _spawnManager;
         private Transform _canvasHitSuccess;
         [SerializeField] private PlayerAudioController playerAudioController;
@@ -58,7 +59,7 @@ namespace Com.Tereshchuk.Shooter
             {
                 _canvasHitSuccess = GameObject.FindWithTag("CanvasAimingSuccessHit").transform;
                 _canvasHitSuccess.gameObject.SetActive(false);
-                activeWeapon.SetCanvasSuccesHitImg(_canvasHitSuccess);
+                //inventoryController.SetCanvasSuccesHitImg(_canvasHitSuccess);
             }
             rigging.InitializeBonesConstraints();
         }

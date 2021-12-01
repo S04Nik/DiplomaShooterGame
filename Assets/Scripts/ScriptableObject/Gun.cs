@@ -3,10 +3,8 @@
 namespace Com.Tereshchuk.Shooter
 {
     [CreateAssetMenu(fileName = "New Gun", menuName = "Gun")]
-    public class Gun : ScriptableObject
+    public class Gun : ItemInfo
     {
-        public int slot; // 0 - primary weapon . 1 - secondary
-        public string name;
         public int damage;
         public int ammo;
         public int clipSize;
@@ -14,7 +12,7 @@ namespace Com.Tereshchuk.Shooter
         public float bulletSpeed ; // 1000.0f
         public float bulletDrop ; //= 0.0f
         public int burst; // 0 - ordinary / 1 - auto / 2 - burst fire
-        public GameObject prefab;
+        public GameObject magazine;
         public TrailRenderer BulletTrailRenderer;
         private int clip; // current clip 
         private int stash; // current ammo

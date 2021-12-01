@@ -5380,7 +5380,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 0.9183006, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -6165,13 +6165,13 @@ GameObject:
   - component: {fileID: 4183243755162598175}
   - component: {fileID: 7348761564407833218}
   - component: {fileID: 5475560498896801610}
-  - component: {fileID: 772021933340519659}
   - component: {fileID: 2681273738026000271}
   - component: {fileID: 2701185985721035455}
   - component: {fileID: 2780375621755795100}
   - component: {fileID: 2680293242561548972}
   - component: {fileID: 7264667496652354804}
   - component: {fileID: 1872666412739101310}
+  - component: {fileID: 3388211627488090613}
   m_Layer: 9
   m_Name: Player 1
   m_TagString: Player
@@ -6210,7 +6210,7 @@ MonoBehaviour:
   followCamera: {fileID: 3275685679712005732}
   mainCamera: {fileID: 0}
   rigging: {fileID: 4183243755162598175}
-  activeWeapon: {fileID: 772021933340519659}
+  inventoryController: {fileID: 3388211627488090613}
   playerAudioController: {fileID: 2680293242561548972}
   hitEffectPrefab: {fileID: 19808544, guid: 78e1c8c5b281b8b439229473779ac9aa, type: 3}
   healthController: {fileID: 1872666412739101310}
@@ -6236,7 +6236,6 @@ MonoBehaviour:
   - {fileID: 1264570422687389013}
   - {fileID: 1445126363781906691}
   - {fileID: 4183243755162598175}
-  - {fileID: 772021933340519659}
   - {fileID: 5790118590058668850}
   - {fileID: 3429971887234282433}
   - {fileID: 582863999242914466}
@@ -6441,27 +6440,6 @@ MonoBehaviour:
   groundSpeed: 2
   cameraLookAt: {fileID: 5081264321447871195}
   rigController: {fileID: 7762451170433627793}
---- !u!114 &772021933340519659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3492322422639068444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd34f249b6953f84682b1fc6865ccf34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponSlots:
-  - {fileID: 4819259963995138404}
-  - {fileID: 5961596802018418441}
-  rigController: {fileID: 7762451170433627793}
-  characterAiming: {fileID: 7348761564407833218}
-  loadOut:
-  - {fileID: 11400000, guid: c7a73889edb28ad419335a7009a29c7e, type: 2}
-  _soundController: {fileID: 7264667496652354804}
-  _reloadWeapon: {fileID: 2681273738026000271}
 --- !u!114 &2681273738026000271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6476,8 +6454,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigController: {fileID: 7762451170433627793}
   AnimationEvents: {fileID: 675121135132898063}
-  activeWeapon: {fileID: 772021933340519659}
   leftHand: {fileID: 588586157196407156}
+  originalMagazine: {fileID: 0}
 --- !u!143 &2701185985721035455
 CharacterController:
   m_ObjectHideFlags: 0
@@ -6630,7 +6608,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 2780375621755795100}
-  _activeWeapon: {fileID: 772021933340519659}
 --- !u!114 &1872666412739101310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6644,6 +6621,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 1000
+--- !u!114 &3388211627488090613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3492322422639068444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63c524bad4504e2c8e85a4ccfed54c48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponSlots:
+  - {fileID: 4819259963995138404}
+  - {fileID: 5961596802018418441}
+  rigController: {fileID: 7762451170433627793}
 --- !u!1 &3492322423018119018
 GameObject:
   m_ObjectHideFlags: 0

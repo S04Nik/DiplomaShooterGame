@@ -5,7 +5,7 @@ namespace Com.Tereshchuk.Shooter
     public class WeaponSoundController : MonoBehaviour
     {
         [SerializeField] private AudioSource _audioSource;
-        [SerializeField] private ActiveWeapon _activeWeapon;
+        //[SerializeField] private ActiveWeapon _activeWeapon;
         
         public void Fire(AudioClip audioClip)
         {

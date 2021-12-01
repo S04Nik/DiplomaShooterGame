@@ -1,10 +1,11 @@
+using Com.Tereshchuk.Shooter.NewWeapon_Inventory_System;
 using UnityEngine;
 
 namespace Com.Tereshchuk.Shooter
 {
     public class WeaponPickUp : MonoBehaviour
     {
-        public RaycastWeapon weaponFab;
+        public Gun gunScriptableObj;
         // [SerializeField] private Transform InteractIcon;
         // [SerializeField]private Transform iconPosition;
         // [SerializeField] private Camera cameraMain;
@@ -17,22 +18,12 @@ namespace Com.Tereshchuk.Shooter
         // }
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log("! ONTRIGGERENTER");
-            ActiveWeapon activeWeapon = other.gameObject.GetComponent<ActiveWeapon>();
+            InventoryController inventoryController = other.gameObject.GetComponent<InventoryController>();
 
-            if (activeWeapon)
+            if (inventoryController)
             {
-                // DrawInteractIcon();
-                // if (Input.GetKeyDown(KeyCode.E))
-                // {
-                Debug.Log(activeWeapon.photonView.Owner);
-                activeWeapon.Equip(0, activeWeapon.photonView);
+                inventoryController.Equip(gunScriptableObj,inventoryController.photonView.ViewID);
                 Destroy(gameObject);
-                // }
-                // else
-                // {
-                //     //InteractIcon.gameObject.SetActive(false);
-                // }
             }
         }
 

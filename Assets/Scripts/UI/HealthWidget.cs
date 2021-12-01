@@ -9,6 +9,7 @@ namespace Com.Tereshchuk.Shooter
 
         public void Initialize(int maxH)
         {
+        
             maxHealth = maxH;
         }
         public void RefreshHealthBar(int _currentHealth)

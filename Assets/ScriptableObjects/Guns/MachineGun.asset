@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1315cc1b2bab42940866462daf45f102, type: 3}
   m_Name: MachineGun
   m_EditorClassIdentifier: 
-  slot: 0
   name: rifle
+  prefab: {fileID: 2871181244834351369, guid: 62e2feb2ab13e584d80b6a8cfcbca9da, type: 3}
+  slot: 0
   damage: 100
   ammo: 255
   clipSize: 30
@@ -21,6 +22,7 @@ MonoBehaviour:
   bulletSpeed: 100
   bulletDrop: 1
   burst: 1
-  prefab: {fileID: 2871181244834351369, guid: 62e2feb2ab13e584d80b6a8cfcbca9da, type: 3}
+  magazine: {fileID: 5878623123389428560, guid: 5e49e278863034d468b4533f81ca320e,
+    type: 3}
   BulletTrailRenderer: {fileID: 3827800863306381443, guid: 78e0e6ca6b83339468ffb42529661e27,
     type: 3}

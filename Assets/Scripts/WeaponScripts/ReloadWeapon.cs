@@ -1,3 +1,4 @@
+using Com.Tereshchuk.Shooter.NewWeapon_Inventory_System;
 using Photon.Pun;
 using UnityEngine;
 
@@ -5,14 +6,16 @@ namespace Com.Tereshchuk.Shooter
 {
     public class ReloadWeapon : MonoBehaviourPunCallbacks
     {
-        public Animator rigController;
-        public WeaponAnimationEvents AnimationEvents;
-        public ActiveWeapon activeWeapon;
-        public Transform leftHand;
-        
+        private Animator rigController;
+        private WeaponAnimationEvents AnimationEvents;
+        private Transform leftHand;
         private bool isReloading;
+        [SerializeField] private GameObject originalMagazine;
         private GameObject magazineAtHand;
         private AmmoWidget _ammoWidget;
+        private Gun loadOut;
+        private FirearmItem weaponController;
+
 
         public bool IsReloading()
         {
@@ -23,6 +26,8 @@ namespace Com.Tereshchuk.Shooter
         {
             AnimationEvents.WeaponAnimationEvent.AddListener(OnAnimationEvent);
             _ammoWidget = GameObject.Find("HUD/Ammo").GetComponent<AmmoWidget>();
+            loadOut =GetComponent<FirearmItem>().loadOut;
+            weaponController = GetComponent<FirearmItem>();
         }
 
         public bool GetReloadingState()
@@ -34,21 +39,15 @@ namespace Com.Tereshchuk.Shooter
         {
             if (photonView.IsMine)
             {
-                RaycastWeapon weapon = activeWeapon.GetActiveWeapon();
-                if (weapon)
+                if (loadOut)
                 {
-                    if (Input.GetKeyDown(KeyCode.R) || weapon.loadOut.GetClip() == 0)
+                    if (Input.GetKeyDown(KeyCode.R) || loadOut.GetClip() == 0)
                     {
-                        if (!activeWeapon.GetHolsteredState())
+                        if (!weaponController._isHolstered)
                         {
                             isReloading = true;
                             rigController.SetTrigger("Reload_Weapon");
                         }
-                    }
-
-                    if (weapon.isFiring)
-                    {
-                        _ammoWidget.RefreshAmmo(weapon.loadOut.GetClip(), weapon.loadOut.GetStash());
                     }
                 }
             }
@@ -75,10 +74,9 @@ namespace Com.Tereshchuk.Shooter
 
         private void DetachMagazine()
         {
-            RaycastWeapon weapon = activeWeapon.GetActiveWeapon();
-            weapon.PlaySoundDetachingMagazine();
-            magazineAtHand = Instantiate(weapon.magazine, leftHand, true);
-            weapon.magazine.SetActive(false);
+            //  weapon.PlaySoundDetachingMagazine();
+           magazineAtHand = Instantiate(originalMagazine, leftHand, true);
+           originalMagazine.SetActive(false);
 
         }
 
@@ -98,16 +96,13 @@ namespace Com.Tereshchuk.Shooter
 
         private void AttachMagazine()
         {
-            RaycastWeapon weapon = activeWeapon.GetActiveWeapon();
-            weapon.magazine.SetActive(true);
-            Destroy(magazineAtHand);
-            weapon.loadOut.Reload();
-            rigController.ResetTrigger("Reload_Weapon");
-            weapon.PlaySoundAttachingMagazine();
-            _ammoWidget.RefreshAmmo(weapon.loadOut.GetClip(), weapon.loadOut.GetStash());
-
-            // not fully finished anim yet . leave for now
-            isReloading = false;
+            originalMagazine.SetActive(true);
+             Destroy(magazineAtHand); 
+             loadOut.Reload();
+             rigController.ResetTrigger("Reload_Weapon");
+                //   weapon.PlaySoundAttachingMagazine();
+           _ammoWidget.RefreshAmmo(loadOut.GetClip(), loadOut.GetStash());
+           isReloading = false;
         }
     }
 }

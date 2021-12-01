@@ -9,7 +9,6 @@ namespace Com.Tereshchuk.Shooter
     {
         public bool isFiring;
         public Gun loadOut;
-        public GameObject magazine;
         public Transform raycastOrigin;
     //    public TrailRenderer trailRenderer;
         public WeaponRecoil recoil;
@@ -245,5 +244,6 @@ namespace Com.Tereshchuk.Shooter
         {
             isFiring = false;
         }
+
     }
 }
