@@ -14,6 +14,7 @@ public class CharacterAiming : MonoBehaviourPunCallbacks
     private PlayerController _playerController;
     [SerializeField] private Animator animator;
     private int _isAimingParam = Animator.StringToHash("isAiming");
+    private float _sensitivity;
 
     public Camera GetCameraMain()
     {
@@ -26,6 +27,7 @@ public class CharacterAiming : MonoBehaviourPunCallbacks
         _cameraMain = _playerController.mainCamera;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        _sensitivity = PlayerPrefs.GetFloat("masterSensitivity");
     }
 
     
@@ -51,8 +53,17 @@ public class CharacterAiming : MonoBehaviourPunCallbacks
     {
         xAxis.Update(Time.fixedDeltaTime);
         yAxis.Update(Time.fixedDeltaTime);
-
-        cameraLookAt.eulerAngles = new Vector3(yAxis.Value, xAxis.Value, 0);
+        float yValue = yAxis.Value * _sensitivity;
+        float xValue = xAxis.Value * _sensitivity;
+        if (yValue >= 45f)
+        {
+            yValue = 45f;
+        }
+        else if (yValue <= -45f)
+        {
+            yValue = -45f;
+        }
+        cameraLookAt.eulerAngles = new Vector3(yValue, xValue, 0);
 
         float cameraRot = _cameraMain.transform.rotation.eulerAngles.y;
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, cameraRot, 0),

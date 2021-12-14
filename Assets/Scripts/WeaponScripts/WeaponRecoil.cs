@@ -9,18 +9,18 @@ namespace Com.Tereshchuk.Shooter
         public Vector2[] recoilPattern;
         public float duration;
         private CharacterAiming characterAiming;
-        private Animator rigController;
+        private WeaponAnimationController _weaponAnimationController;
         private float _time;
         private CinemachineImpulseSource _impulseSource;
         private float _verticalRecoil;
         private float _horizontalRecoil;
         private int _recoilPatternIndex;
         private Camera _mainCamera;
-        
-        public void SetRecoil(CharacterAiming aimingScript , Animator animator)
+        private static string animName = "weapon_recoil_";
+        public void Initialize(CharacterAiming aimingScript,WeaponAnimationController animControl)
         {
             characterAiming = aimingScript;
-            rigController = animator;
+            _weaponAnimationController = animControl;
         }
         
         private void Awake()
@@ -64,8 +64,7 @@ namespace Com.Tereshchuk.Shooter
             _verticalRecoil = recoilPattern[_recoilPatternIndex].y;
 
             _recoilPatternIndex = NextIndex(_recoilPatternIndex);
-            rigController.Play("weapon_recoil_" + weaponName, 1, 0.0f);
-
+            _weaponAnimationController.PlayRecoil(animName + weaponName, 1, 0.0f);
         }
     }
 }

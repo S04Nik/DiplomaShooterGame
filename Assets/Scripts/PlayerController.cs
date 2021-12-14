@@ -17,16 +17,18 @@ namespace Com.Tereshchuk.Shooter
         [SerializeField] private InventoryController inventoryController;
         private SpawnManager _spawnManager;
         private Transform _canvasHitSuccess;
+        public Light light;
+        [SerializeField] private Transform leftHand;
+
         [SerializeField] private PlayerAudioController playerAudioController;
         [SerializeField] private ParticleSystem hitEffectPrefab;
         [SerializeField] private HealthController healthController;
         private ParticleSystem _hitEffect;
         
-
         #endregion
 
         #region MonoBehaviour Callbacks
-
+        
         public void SetGenderVoice(int gender)
         {
             playerAudioController.SetVoice(gender);
@@ -37,12 +39,14 @@ namespace Com.Tereshchuk.Shooter
             if (photonView.IsMine) return;
             mainCamera = GameObject.FindWithTag("FreeCamera").GetComponent<Camera>();
             mainCamera.gameObject.tag = "BusyCamera";
+
         }
 
         public void Start()
         {
             _spawnManager = GameObject.Find("Manager").GetComponent<SpawnManager>();
-                
+            light = GameObject.FindWithTag("Light").GetComponent<Light>();
+            light.intensity = PlayerPrefs.GetFloat("masterBrightness");
             _hitEffect = Instantiate(hitEffectPrefab, transform.position, quaternion.identity, transform);
 
             if (!photonView.IsMine) // LAYERS
@@ -66,7 +70,6 @@ namespace Com.Tereshchuk.Shooter
 
         void Update()
         {
-
             if (!photonView.IsMine)
             {
                 return;
@@ -96,16 +99,14 @@ namespace Com.Tereshchuk.Shooter
         }
         
         [PunRPC]
-        public void TakeDamage(int damage , int enemyId,Vector3 hitInfoPoint, Vector3 surface)
+        public void TakeDamage(int damage , int enemyId,Vector3 hitInfoPoint)
         {
+            Debug.Log("!@# TAKE DAMAGE");
             if (photonView.IsMine)
             {
-                if (healthController.DecreaseHealth(damage))
+                if (!healthController.DecreaseHealth(damage))
                 {
-                    //health > 0
-                }
-                else
-                {
+                    inventoryController.ItemWidjet.ClearWidjets();
                     photonView.RPC(nameof(UpdateKillList),RpcTarget.All,enemyId,photonView.ViewID);
                     // wont find if it will be disactive
                     _canvasHitSuccess.gameObject.SetActive(true);

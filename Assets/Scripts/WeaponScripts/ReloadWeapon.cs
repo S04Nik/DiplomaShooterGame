@@ -6,30 +6,31 @@ namespace Com.Tereshchuk.Shooter
 {
     public class ReloadWeapon : MonoBehaviourPunCallbacks
     {
-        private Animator rigController;
-        private WeaponAnimationEvents AnimationEvents;
+        // private AmmoWidjet _ammoWidget;
+        private WeaponAnimationController _weaponAnimationController;
+        private GunSoundController _gunSoundController;
         private Transform leftHand;
-        private bool isReloading;
-        [SerializeField] private GameObject originalMagazine;
+        public bool isReloading;
         private GameObject magazineAtHand;
-        private AmmoWidget _ammoWidget;
+        [SerializeField] private GameObject originalMagazine;
         private Gun loadOut;
-        private FirearmItem weaponController;
-
-
+        
+        private void Start()
+        {
+            _weaponAnimationController = GetComponent<WeaponAnimationController>();
+            _weaponAnimationController.AnimationEvents.WeaponAnimationEvent.AddListener(OnAnimationEvent);
+            _gunSoundController = GetComponent<GunSoundController>();
+            // _ammoWidget = GetComponent<AmmoWidjet>();
+        }
+        public void Initialize(Transform leftH,Gun LoadOut)
+        {
+            leftHand = leftH;
+            loadOut = LoadOut;
+        }
         public bool IsReloading()
         {
             return isReloading;
         }
-
-        private void Start()
-        {
-            AnimationEvents.WeaponAnimationEvent.AddListener(OnAnimationEvent);
-            _ammoWidget = GameObject.Find("HUD/Ammo").GetComponent<AmmoWidget>();
-            loadOut =GetComponent<FirearmItem>().loadOut;
-            weaponController = GetComponent<FirearmItem>();
-        }
-
         public bool GetReloadingState()
         {
             return isReloading;
@@ -43,11 +44,11 @@ namespace Com.Tereshchuk.Shooter
                 {
                     if (Input.GetKeyDown(KeyCode.R) || loadOut.GetClip() == 0)
                     {
-                        if (!weaponController._isHolstered)
-                        {
+                       // if (!weaponController._isHolstered)
+                      //  {
                             isReloading = true;
-                            rigController.SetTrigger("Reload_Weapon");
-                        }
+                            _weaponAnimationController.PlayReloading();
+                       // }
                     }
                 }
             }
@@ -74,10 +75,9 @@ namespace Com.Tereshchuk.Shooter
 
         private void DetachMagazine()
         {
-            //  weapon.PlaySoundDetachingMagazine();
-           magazineAtHand = Instantiate(originalMagazine, leftHand, true);
+            magazineAtHand = Instantiate(originalMagazine, leftHand, true);
            originalMagazine.SetActive(false);
-
+           _gunSoundController.DetachMagazine();
         }
 
         private void DropMagazine()
@@ -97,12 +97,14 @@ namespace Com.Tereshchuk.Shooter
         private void AttachMagazine()
         {
             originalMagazine.SetActive(true);
-             Destroy(magazineAtHand); 
-             loadOut.Reload();
-             rigController.ResetTrigger("Reload_Weapon");
-                //   weapon.PlaySoundAttachingMagazine();
-           _ammoWidget.RefreshAmmo(loadOut.GetClip(), loadOut.GetStash());
-           isReloading = false;
+            Destroy(magazineAtHand); 
+            loadOut.Reload();
+            _weaponAnimationController.FinishReloading();
+            _gunSoundController.AttachMagazine();
+            
+            // _ammoWidget.Refresh();
+            
+            isReloading = false;
         }
     }
 }

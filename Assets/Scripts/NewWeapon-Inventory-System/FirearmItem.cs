@@ -7,14 +7,26 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
 {
     public class FirearmItem:InventoryItem
     {
-        [SerializeField]public Gun loadOut;
         public Transform raycastOrigin;
-        public WeaponRecoil recoilManager;
-        public ReloadWeapon reloadManager;
-        public AmmoWidget _ammoWidget;
         public ParticleSystem[] muzzleFlash;
         public ParticleSystem[] hitEffects;
         public Action ChangeCanvasAimingDot;
+        
+        // private AmmoWidjet _ammoWidget;
+        private GunSoundController _soundController;
+        private bool isReloading;
+        private Ray _ray;
+        private RaycastHit _hitInfo;
+        private float _accumulatedTime;
+        private List<Bullet> _bullets = new List<Bullet>();
+        private float _maxLifeTime = 1.0f;
+        private Transform _raycastDestination;
+        private WeaponRecoil recoilManager;
+        private ReloadWeapon reloadManager;
+        
+        [SerializeField]private Gun loadOut;
+        [SerializeField] private ParticleSystem bulletShellDrop;
+        [SerializeField] WeaponAnimationController weaponAnimationController;
         class Bullet
         {
             public float Time;
@@ -22,33 +34,29 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
             public Vector3 InitialVelocity;
             public TrailRenderer Tracer;
         }
-        private Transform _raycastDestination;
-        private Ray _ray;
-        private RaycastHit _hitInfo;
-        private float _accumulatedTime;
-        private List<Bullet> _bullets = new List<Bullet>();
-        private float _maxLifeTime = 1.0f;
-        private WeaponSoundController _soundController;
-        [SerializeField] private AudioClip fireClip;
-        [SerializeField] private AudioClip attachMagazineClip;
-        [SerializeField] private AudioClip detachMagazineClip;
-        [SerializeField] private ParticleSystem bulletShellDrop;
-        private bool isReloading;
 
         private void Awake()
         {
-            recoilManager = GetComponent<WeaponRecoil>();
-            reloadManager = GetComponent<ReloadWeapon>();
+            ItemInfo = loadOut;
             loadOut.Initialize();
+            reloadManager = GetComponent<ReloadWeapon>();
+            recoilManager = GetComponent<WeaponRecoil>();
+            // _ammoWidget = GetComponent<AmmoWidjet>();
+            _soundController = GetComponent<GunSoundController>();
+        }
+        [PunRPC]
+        public void RPCInitializeAudioGrenade()
+        {
+            _soundController.Initialize();
+        }
+        private void Start()
+        {
+            photonView.RPC(nameof(RPCInitializeAudioGrenade),RpcTarget.All);
         }
         public void SetRaycastDestination(Camera mainCamera)
         {
             _raycastDestination = mainCamera.gameObject.transform.Find("CrossTarget").transform;
             recoilManager.SetCamera(mainCamera);
-        }
-        public void SetAudioController(WeaponSoundController audioController)
-        {
-            _soundController = audioController;
         }
         Vector3 GetPosition(Bullet bullet)
         {
@@ -72,14 +80,10 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    _soundController.Fire(fireClip);
+                    _soundController.Fire();
                     UseItem();
                 }
-                if (IsActivated)
-                {
-                    UpdateFiring(Time.deltaTime);
-//                    _ammoWidget.RefreshAmmo(loadOut.GetClip(), loadOut.GetStash());
-                }
+
                 //photonView.RPC(nameof(UpdateBullets),RpcTarget.All,Time.deltaTime);
                 UpdateBullets(Time.deltaTime);
 
@@ -89,24 +93,37 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
                 }
             }
         }
+        public override bool Check()
+        {
+            if (!reloadManager.isReloading && !IsActivated)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
         public override void UseItem()
         {
             IsActivated = true;
             _accumulatedTime = 0.0f;
             recoilManager.Reset();
+            UpdateFiring(Time.deltaTime);
             //FireBullet();
         }
         public override void Initialize(Transform parent)
-        { 
-            SetRaycastDestination(parent.GetComponent<PlayerController>().mainCamera);
-            SetAudioController(parent.GetComponent<WeaponSoundController>());
-            recoilManager.SetRecoil(parent.GetComponent<CharacterAiming>(),parent.GetComponentInChildren<Animator>());
-            _ammoWidget = GetComponent<AmmoWidget>();
+        {
+            PlayerController pc = parent.GetComponent<PlayerController>();
+            reloadManager.Initialize(parent.GetComponent<InventoryController>().GetLeftHand(), loadOut);
+            SetRaycastDestination(pc.mainCamera);
+            
+            WeaponAnimationEvents weaponAnim = parent.GetComponentInChildren<WeaponAnimationEvents>();
+            weaponAnimationController.Initialize(weaponAnim);
+            recoilManager.Initialize(parent.GetComponentInParent<CharacterAiming>(),weaponAnimationController);
         }
 
         public override void SetUI(Transform ui)
         {
-            //_ammoWidget.RefreshAmmo(_equipedWeapons[_activeWeaponIndex].GetLoadOut<Gun>().GetClip(),_equipedWeapons[_activeWeaponIndex].GetLoadOut<Gun>().GetStash());
         }
 
         public override string GetName()
@@ -158,25 +175,26 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
 
             if (Physics.Raycast(_ray, out _hitInfo, distance))
             {
-                Debug.DrawLine(_ray.origin,_hitInfo.point,Color.red,1.0f);
+                Debug.DrawLine(_ray.origin,_hitInfo.point,Color.red,10.0f);
 
                 bullet.Tracer.transform.position = _hitInfo.point;
                 bullet.Time = _maxLifeTime;
 
                 if (_hitInfo.transform.CompareTag("Player"))
                 {
-
                     PlayerController tmpr = _hitInfo.transform.GetComponent<PlayerController>();
-                    tmpr.photonView.RPC("TakeDamage", RpcTarget.All, loadOut.damage, photonView.ViewID, _hitInfo.point,
-                        _hitInfo.normal);
+                    tmpr.photonView.RPC("TakeDamage", RpcTarget.All, loadOut.damage, photonView.ViewID, _hitInfo.point);
                     //ChangeCanvasAimingDot(); !!!!
                 }
                 else
                 {
                     hitEffects[0].transform.position = _hitInfo.point;
                     hitEffects[0].transform.forward = _hitInfo.normal;
+                    hitEffects[2].transform.position = _hitInfo.point;
+                    hitEffects[2].transform.forward = _hitInfo.normal;
                     // if metal if other
                     hitEffects[0].Emit(1);
+                    hitEffects[2].Emit(1);
                 }
 
 
@@ -198,8 +216,7 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
 
         public void FireBullet()
         {
-            Debug.Log("@@@ FIRE BULLET");
-            if (loadOut.FireBullet())
+            if (loadOut.Fire())
             {
                 photonView.RPC(nameof(EmmitParticles), RpcTarget.All);
 
@@ -210,17 +227,11 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
 
                 recoilManager.GenerateRecoil(loadOut.name);
             }
-            else
-            {
-                Debug.Log("@@@ loadOut.FireBullet NOOOOT");
-            }
-            
         }
 
         [PunRPC]
         public void EmmitParticles()
         {
-            Debug.Log("PARTICLES EMMIT @@@@");
             bulletShellDrop.Emit(1); // выпадает гильза 
             foreach (var particle in muzzleFlash)
             {

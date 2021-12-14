@@ -67,6 +67,16 @@ MonoBehaviour:
   - ActivateProperSkin
   - UpdateKillList
   - RPCCameraSet
+  - Launch
+  - Explode
+  - removeUsedGrenade
+  - RemoveUsedGrenade
+  - UsePin
+  - UsePinRpc
+  - RPCInitializeAudioGrenade
+  - RpcFire
+  - RpcAttachMagazine
+  - RpcDetachMagazine
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

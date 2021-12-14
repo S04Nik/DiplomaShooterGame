@@ -52,6 +52,9 @@ public class PlayerAudioController : MonoBehaviour
     private void Start()
     {
         _audioSource = GetComponent<AudioSource>();
+        _audioSource.volume = PlayerPrefs.GetFloat("masterVolume");
+        Debug.Log("& AUDIO SOURCE VOLUME :"+_audioSource.volume);
+        
         randomClipsList = new List<AudioClip>(new AudioClip[_audioFootClips.Length]);
         for (int i = 0; i < _audioFootClips.Length; i++)
         {

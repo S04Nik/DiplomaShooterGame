@@ -11,13 +11,14 @@ public class MultiAimConstSetUp : MonoBehaviourPunCallbacks,IPunObservable
     public MultiAimConstraint macSpine1;
     public MultiAimConstraint macSpine2;
     public Animator anim;
+    [SerializeField] private Animator rigAnim;
     public Transform head;
     public Transform spine1;
     public Transform spine2;
 
 
     private PlayerController pC;
-    public Transform SourceObject;
+    public CrossTarget SourceObject;
 
 
     [PunRPC]
@@ -25,7 +26,8 @@ public class MultiAimConstSetUp : MonoBehaviourPunCallbacks,IPunObservable
     {
         pC = GetComponent<PlayerController>();
 
-        SourceObject = pC.mainCamera.gameObject.transform.Find("CrossTarget").transform;
+        SourceObject = pC.mainCamera.GetComponentInChildren<CrossTarget>();
+        SourceObject.Initialize(rigAnim);
 
         macWeapon.data.sourceObjects.Clear();
         macHead.data.sourceObjects.Clear();
@@ -35,7 +37,7 @@ public class MultiAimConstSetUp : MonoBehaviourPunCallbacks,IPunObservable
 
         WeightedTransformArray wTransformArray = new WeightedTransformArray();
         
-        wTransformArray.Add(new WeightedTransform(SourceObject,1f));
+        wTransformArray.Add(new WeightedTransform(SourceObject.transform,1f));
         
         macWeapon.data.sourceObjects = wTransformArray;
         macHead.data.sourceObjects = wTransformArray;
@@ -70,7 +72,7 @@ public class MultiAimConstSetUp : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext((Quaternion)spine1.transform.rotation);
             stream.SendNext((Quaternion)spine2.transform.rotation);
             if(SourceObject)
-                stream.SendNext((Vector3)SourceObject.position);
+                stream.SendNext((Vector3)SourceObject.transform.position);
             
         }
         else
@@ -79,7 +81,7 @@ public class MultiAimConstSetUp : MonoBehaviourPunCallbacks,IPunObservable
             head.transform.rotation = (Quaternion)stream.ReceiveNext();
             spine1.transform.rotation = (Quaternion)stream.ReceiveNext();
             spine2.transform.rotation = (Quaternion)stream.ReceiveNext();
-            SourceObject.position = (Vector3) stream.ReceiveNext();
+            SourceObject.transform.position = (Vector3) stream.ReceiveNext();
         }
     }
     

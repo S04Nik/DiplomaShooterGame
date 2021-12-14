@@ -6,7 +6,7 @@ public class SkinApply : MonoBehaviourPunCallbacks,IPunObservable
 {
     [SerializeField] private Transform[] maleCharacterSkins;
     [SerializeField] private Transform[] femaleCharacterSkins;
-    [SerializeField] private Transform[] hats;
+    [SerializeField] private Transform[] hats; 
     [SerializeField] private Transform[] maleHairCuts;
     [SerializeField] private Transform[] femaleHairCuts;
     [SerializeField] private Transform[] beards;

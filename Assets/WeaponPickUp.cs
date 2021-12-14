@@ -5,7 +5,7 @@ namespace Com.Tereshchuk.Shooter
 {
     public class WeaponPickUp : MonoBehaviour
     {
-        public Gun gunScriptableObj;
+        public ItemInfo gunScriptableObj;
         // [SerializeField] private Transform InteractIcon;
         // [SerializeField]private Transform iconPosition;
         // [SerializeField] private Camera cameraMain;
@@ -23,7 +23,7 @@ namespace Com.Tereshchuk.Shooter
             if (inventoryController)
             {
                 inventoryController.Equip(gunScriptableObj,inventoryController.photonView.ViewID);
-                Destroy(gameObject);
+                
             }
         }
 

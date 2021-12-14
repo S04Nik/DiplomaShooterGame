@@ -1,3 +1,4 @@
+using Com.Tereshchuk.Shooter.NewWeapon_Inventory_System;
 using Photon.Pun;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace Com.Tereshchuk.Shooter
         private Vector2 _input;
         private Vector3 _velocity;
         private bool _isJumping;
-       // private ActiveWeapon _activeWeapon;
+        private InventoryController _inventoryController;
         private ReloadWeapon _reloadWeapon;
         [SerializeField] private Transform cameraLookAt;
         [SerializeField] private Animator rigController;
@@ -37,8 +38,7 @@ namespace Com.Tereshchuk.Shooter
 
             _animator = GetComponent<Animator>();
             _characterController = GetComponent<CharacterController>();
-            //_activeWeapon = GetComponent<ActiveWeapon>();
-            _reloadWeapon = GetComponent<ReloadWeapon>();
+            _inventoryController = GetComponent<InventoryController>();
             _playerAudioController = GetComponent<PlayerAudioController>();
         }
 
@@ -129,13 +129,8 @@ namespace Com.Tereshchuk.Shooter
         bool isSprinting()
         {
             bool isSprinting = Input.GetKey(KeyCode.LeftShift) && _input.y > 0;
-
-           // bool isFiring = _activeWeapon.IsFiring();
-            bool isReloading = _reloadWeapon.IsReloading();
-          //  bool isChangingWeapon = _activeWeapon.IsChangingWeapon();
-
-          //  return isSprinting && !isFiring && !isReloading && !isChangingWeapon;
-          return false;
+            bool weaponCheck = _inventoryController.Check();
+            return isSprinting && weaponCheck;
         }
 
         private void UpdateIsSprinting()

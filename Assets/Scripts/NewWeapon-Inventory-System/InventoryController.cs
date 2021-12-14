@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
@@ -6,30 +8,79 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
 { 
     public class InventoryController:MonoBehaviourPunCallbacks,IControllerInventory
     { 
-        private InventoryItem[] _items = new InventoryItem[2];
+        public InventoryItem[] _items = new InventoryItem[3];
+        [SerializeField] private Transform[] armor;
         public Transform[] weaponSlots;
-        
+        public ItemWidjet ItemWidjet;
         public Animator rigController;
-        public Transform leftHand;
+        [SerializeField] private Transform leftHand;
         public WeaponAnimationEvents AnimationEvents;
-        
-        
-        private bool _isHolstered;
-        private bool _isChangingWeapon;
+        public bool _isChangingWeapon { private set; get; }
+        public bool _isHolstered { private set; get; }
         private readonly int _weaponIndxParam = Animator.StringToHash("WeaponIndex");
         private readonly int _holsterWeaponParam = Animator.StringToHash("Holster_Weapon");
         private readonly int _notSprintingParam = Animator.StringToHash("notSprinting");
         private int _activeWeaponIndex;
-        
-        public bool GetHolsteredState()
+
+        private void Start()
         {
-            return _isHolstered;
+            ItemWidjet = GameObject.Find("Canvas_Widgets").GetComponent<ItemWidjet>();
+            
+        }
+
+        public Transform GetLeftHand()
+        {
+            return leftHand;
+        }
+        
+        // [PunRPC]
+        // private IEnumerator PlayUnarmed(int indx)
+        // {
+        //     _isChangingWeapon = true;
+        //     
+        //
+        //         rigController.SetBool(_holsterWeaponParam,false);
+        //         rigController.Play("equip_"+weapon.GetName());
+        //         // do
+        //         // {
+        //         //     yield return new WaitForEndOfFrame();
+        //         // } while (rigController.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
+        //         yield return new WaitForSeconds(0.5f);
+        //         
+        //         _isChangingWeapon = false;
+        //         _isHolstered = false;
+        //         
+        //         StopCoroutine(nameof(ActivateWeapon));
+        // }
+        
+        public void RemoveUsedItem(int indx)
+        {
+            Debug.Log("%%%%   REMOVE ITEM FROM LIST");
+            ItemWidjet.DiactivateUI( _items[indx].ItemInfo);
+            _items[indx] = null;
+            _activeWeaponIndex = -1;
+            rigController.SetInteger(_weaponIndxParam,_activeWeaponIndex);
+        }
+        public bool Check()
+        {
+            if (GetActiveWeapon())
+            {
+                if (GetActiveWeapon().Check() && !_isChangingWeapon)
+                {
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else if (!_isChangingWeapon)
+                return true;
+
+            return false;
         }
         public void Show()
         {
 
         }
-
         public void Hide()
         {
           
@@ -49,18 +100,27 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
             {
                 var weapon = GetWeapon(_activeWeaponIndex);
                 bool notSprinting = rigController.GetCurrentAnimatorStateInfo(2).shortNameHash == _notSprintingParam;
-            
-                if (weapon /*&& !_isHolstered && notSprinting && !_reloadWeapon.GetReloadingState()*/)
+
+                if (weapon && !_isChangingWeapon && !_isHolstered && notSprinting )
                 {
+                    ItemWidjet.SetActiveWeapon(_activeWeaponIndex,weapon.ItemInfo);
                     weapon.UpdateItem();
                 }
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                if (Input.GetKeyDown(KeyCode.Alpha1)&& GetWeapon(0) != null)
                 {
                     photonView.RPC(nameof(SetActiveWeapon),RpcTarget.All,0);
                 }
-                if (Input.GetKeyDown(KeyCode.Alpha2))
+                if (Input.GetKeyDown(KeyCode.Alpha2)&& GetWeapon(1) != null)
                 {
                     photonView.RPC(nameof(SetActiveWeapon),RpcTarget.All,1);
+                }
+                if (Input.GetKeyDown(KeyCode.Alpha3) && GetWeapon(2) != null)
+                {
+                    photonView.RPC(nameof(SetActiveWeapon),RpcTarget.All,2);
+                }
+                if (Input.GetKeyDown(KeyCode.Alpha4) && GetWeapon(3) != null)
+                {
+                    photonView.RPC(nameof(SetActiveWeapon),RpcTarget.All,3);
                 }
                 if (Input.GetKeyDown(KeyCode.X))
                 {
@@ -77,11 +137,12 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
         [PunRPC]
         public void ShowOthersMyWeapon(int weaponId,int ownerId)
         {
+            Debug.Log("SHOW OTHER MY WEAPON %%%");
             InventoryItem newItem = PhotonView.Find(weaponId).GetComponent<InventoryItem>();
             int weaponSlotIndex = newItem.SlotNumber;
             InventoryItem inventoryItem = newItem;
             inventoryItem.transform.SetParent(weaponSlots[weaponSlotIndex],false);
-            inventoryItem.Initialize(this.transform);
+            inventoryItem.Initialize(transform);
             _items[weaponSlotIndex] = inventoryItem;
             photonView.RPC(nameof(SetActiveWeapon),RpcTarget.All,inventoryItem.SlotNumber);
         }
@@ -103,21 +164,32 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
         [PunRPC]
         void SetActiveWeapon(int weaponSlotIndex)
         {
-            int holsterIndex = _activeWeaponIndex;
-            int activateIndex = weaponSlotIndex;
-
-            if (holsterIndex == activateIndex)
+            if (!rigController.GetBool("isAiming"))
             {
-                holsterIndex = -1; // HolsterWeapon = null
+                int holsterIndex = _activeWeaponIndex;
+                int activateIndex = weaponSlotIndex;
+                InventoryItem holstered = GetWeapon(holsterIndex);
+                InventoryItem activated = GetWeapon(activateIndex);
+                if(holstered)  holstered.IsActivated = false;
+                if(activated)  activated.IsActivated = true;
+                
+                if (holsterIndex == activateIndex)
+                {
+                    holsterIndex = -1; // HolsterWeapon = null
+                }
+                StartCoroutine(SwitchWeapon(holsterIndex,activateIndex));
             }
-        
-            StartCoroutine(SwitchWeapon(holsterIndex,activateIndex));
+          
+            
         }
         [PunRPC]
         IEnumerator SwitchWeapon(int holsterIndex, int activateIndex)
         {
             rigController.SetInteger(_weaponIndxParam,activateIndex);
-        
+            if (holsterIndex >= 2)
+            {
+                _items[holsterIndex].gameObject.SetActive(false);
+            }
             yield return StartCoroutine(HolsterWeapon(holsterIndex));
             //yield return new WaitForSeconds(1f); 
             // не дожидает окончание holster = false
@@ -126,7 +198,8 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
             _activeWeaponIndex = activateIndex;
         
             //_ammoWidget.RefreshAmmo(_equipedWeapons[_activeWeaponIndex].loadOut.GetClip(),_equipedWeapons[_activeWeaponIndex].loadOut.GetStash());
-            StopCoroutine("SwitchWeapon");
+            StopCoroutine(nameof(SetActiveWeapon));
+            StopCoroutine(nameof(SwitchWeapon));
         }
         [PunRPC]
         IEnumerator HolsterWeapon(int indx)
@@ -140,88 +213,79 @@ namespace Com.Tereshchuk.Shooter.NewWeapon_Inventory_System
                 // do
                 // {
                 // не успевает закончится . срабатывает 1 раз
-                        yield return new WaitForSeconds(1);
+                        yield return new WaitForSeconds(1f);
                 // } while (rigController.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
                 
                 _isChangingWeapon = false;
-                
                 StopCoroutine(nameof(HolsterWeapon));
             }
         }
         [PunRPC]
         private IEnumerator ActivateWeapon(int indx)
-    {
-        _isChangingWeapon = true;
-
-        var weapon = GetWeapon(indx);
-        if (weapon)
         {
-            rigController.SetBool(_holsterWeaponParam,false);
-            rigController.Play("equip_"+weapon.GetName());
-            // do
-            // {
-            //     yield return new WaitForEndOfFrame();
-            // } while (rigController.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
-            yield return new WaitForSeconds(1);
-
-            _isHolstered = false;
-            _isChangingWeapon = false;
-            
-            StopCoroutine("ActivateWeapon");
-        }
+            _isChangingWeapon = true;
         
-    }
-        [PunRPC]
-        // public void ShowOthersMyWeapon(int weaponId,int ownerId)
-        // {
-        //     //RaycastWeapon newWeapon = Instantiate(loadOut[loadOutIndex].prefab).GetComponent<RaycastWeapon>();
-        //     InventoryItem newWeapon = PhotonView.Find(weaponId).GetComponent<InventoryItem>();
-        //
-        //     //newWeapon.SetCamera(characterAiming._cameraMain);   
-        //     int weaponSlotIndex = newWeapon.Initialize();
-        //     var weapon = GetWeapon(weaponSlotIndex);
-        //     if (weapon)
-        //     {
-        //         Destroy(weapon.gameObject);//raycastweapon not gameobject
-        //     }
-        //     weapon = newWeapon;
-        //     weapon.recoil.SetRecoil(characterAiming,rigController);
-        //
-        //     weapon.transform.SetParent(weaponSlots[weaponSlotIndex],false);
-        //     _equipedWeapons[weaponSlotIndex] = weapon;
-        //
-        //     //photonView.RPC("SetActiveWeapon",RpcTarget.All,newWeapon.loadOut.slot);
-        //     SetActiveWeapon(newWeapon.loadOut.slot); 
-        // }
-    public void Equip(ItemInfo itemInfo,int viewId)
-    {
-        if (photonView.IsMine)
-        {
-            InventoryItem newWeapon = PhotonNetwork.Instantiate(itemInfo.prefab.name,Vector3.zero,Quaternion.identity).GetComponent<InventoryItem>();
-            if (!CheckForExistingWeapon(newWeapon))
-            { 
-                _items[0] = newWeapon;
-            }
-            // newWeapon.ChangeCanvasAimingDot += StartChangingCanvasAimindDot;
-            if (photonView.ViewID == viewId)
+            var weapon = GetWeapon(indx);
+            if (weapon)
             {
-                newWeapon.photonView.RequestOwnership();
+                rigController.SetBool(_holsterWeaponParam,false);
+                rigController.Play("equip_"+weapon.GetName());
+                // do
+                // {
+                //     yield return new WaitForEndOfFrame();
+                // } while (rigController.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
+                yield return new WaitForSeconds(0.5f);
+                
+                _isChangingWeapon = false;
+                _isHolstered = false;
+                
+                StopCoroutine(nameof(ActivateWeapon));
             }
-            photonView.RPC(nameof(ShowOthersMyWeapon),RpcTarget.AllBuffered,newWeapon.photonView.ViewID,viewId);
+            
         }
-    }
 
-        private bool CheckForExistingWeapon(InventoryItem newWeapon)
+        public void Equip(ItemInfo itemInfo,int viewId)
         {
-            for (int i = 0; i < _items.Length; i++)
+            if (photonView.IsMine)
             {
-                if (_items[newWeapon.SlotNumber])
+                if (itemInfo.type != "armor")
                 {
-                    Destroy(_items[i].gameObject);
-                    _items[i] = newWeapon;
+                    if (!CheckForDublicates(itemInfo))
+                    {
+                        _items[itemInfo.slot] = PhotonNetwork.Instantiate(itemInfo.prefab.name,Vector3.zero,Quaternion.identity).GetComponent<InventoryItem>();;
+                    }
+                    // newWeapon.ChangeCanvasAimingDot += StartChangingCanvasAimindDot;
+                    if (photonView.ViewID == viewId)
+                    {
+                        _items[itemInfo.slot].photonView.RequestOwnership();
+                    }
+                    ItemWidjet.SetUI(itemInfo,itemInfo.slot);
+                    photonView.RPC(nameof(ShowOthersMyWeapon),RpcTarget.AllBuffered, _items[itemInfo.slot].photonView.ViewID,viewId);
+                }
+                else
+                {
+                    armor[itemInfo.slot].gameObject.SetActive(true);
+                    ItemWidjet.SetUI(itemInfo,-1);
+                }
+
+            }
+        }
+
+        private bool CheckForDublicates(ItemInfo newWeapon)
+        {
+            var weapon = GetWeapon(newWeapon.slot);
+            if (newWeapon.slot == 2 || newWeapon.slot == 3)
+            {
+                if (weapon)
+                {
                     return true;
                 }
+            }else if (weapon)
+            {
+                Destroy(weapon.gameObject);
+                return false;
             }
+
             return false;
         }
     }
